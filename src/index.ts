@@ -6,7 +6,7 @@ import {
     RawProviderApiResponse,
     RawProviderRequest
 } from './api';
-import { ConnectResponse, DisconnectResponse } from './models';
+import { ConnectResponse } from './models';
 export * from './api';
 export * from './models';
 
@@ -18,7 +18,7 @@ export interface Provider {
 
     checkConnect(): Promise<ConnectResponse | void>;
     connect(): Promise<ConnectResponse | void>;
-    disconnect(): Promise<DisconnectResponse | void>;
+    disconnect(): Promise<ConnectResponse | void>;
     // subscribe(params: SubscribeParams): SubscribeResponse;
     request<T extends ProviderMethod>(params: RawProviderRequest<T>): Promise<RawProviderApiResponse<T>>;
 }
@@ -134,7 +134,7 @@ export class ProviderRpcClient {
                   if (this._provider != null) {
                     resolve();
                   } else {
-                    const eventName = window.__hasEverscaleProvider === true ? 'ever#initialized' : 'ton#initialized';
+                    const eventName = window.everscale?.isSurf === true ? 'surfkeeper#initialized' : 'surfkeeper#initialized';
                     window.addEventListener(eventName, _ => {
                       this._provider = getProvider();
                       resolve();
@@ -200,9 +200,25 @@ export class ProviderRpcClient {
     }
   
     /**
-     * Removes all permissions for current origin and stops all subscriptions
+     * Connect extension
      */
-    public async disconnect(): Promise<void> {
+    public async connect(): Promise<ConnectResponse | void> {
+      await this.ensureInitialized();
+      return await this._provider!.connect();
+    }
+  
+    /**
+     * Get connection status
+     */
+    public async connectStatus(): Promise<ConnectResponse | void> {
+      await this.ensureInitialized();
+      return await this._provider!.checkConnect();
+    }
+  
+    /**
+     * Disconnect
+     */
+    public async disconnect(): Promise<ConnectResponse | void> {
       await this.ensureInitialized();
       await this._provider!.disconnect();
     }

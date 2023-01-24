@@ -38,6 +38,15 @@ export type ProviderEvents<Addr = Address> = {
     permissionsChanged: {
       // permissions: Partial<Permissions<Addr>>;
     };
+  
+    /**
+     * Called when permissions are changed.
+     * Mostly when account has been removed from the current `accountInteraction` permission,
+     * or disconnect method was called
+     */
+    accountChanged: {
+      account: Addr;
+    };
   };
 
 /**

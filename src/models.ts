@@ -13,10 +13,6 @@ export interface ConnectResponse {
     publicKey?: string;
 }
 
-export interface DisconnectResponse {
-    isConnected: boolean;
-}
-
 export type BalanceListener = (balance: string) => void | Promise<void>;
 
 export interface SubscribeParams {
