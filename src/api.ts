@@ -1,4 +1,4 @@
-import { Abi, Address, EverNetNameKey } from "./models";
+import { Abi, Address, EverscaleNetNameKey } from "./models";
 
 /**
  * @category Provider Api
@@ -115,7 +115,7 @@ export declare type ProviderApi<Addr = Address> = {
             /**
              * Name of network to send message in
              */
-            net: EverNetNameKey;
+            net: EverscaleNetNameKey;
         };
         output: {
         };
@@ -140,7 +140,7 @@ export declare type ProviderApi<Addr = Address> = {
             /**
              * Name of network to send message in
              */
-            net: EverNetNameKey;
+            net: EverscaleNetNameKey;
             /**
              * Address to send transaction to
              */

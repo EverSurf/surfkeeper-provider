@@ -1,6 +1,6 @@
 type RequestMethods = 'connect' | 'disconnect' | 'checkConnect' | 'subscribeToBalance' | 'unsubscribeFromBalance';
 type SubscribeType = 'balance';
-export type EverNetNameKey = 'mainnet' | 'devnet';
+export type EverscaleNetNameKey = 'mainnet' | 'devnet';
 
 export interface Request {
     method: RequestMethods;
