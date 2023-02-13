@@ -6,7 +6,7 @@ import {
   RawProviderApiResponse,
   RawProviderRequest
 } from './api';
-import { ConnectResponse } from './models';
+import { ConnectResponse, SubscribeParams, SubscribeResponse } from './models';
 export * from './api';
 export * from './models';
 
@@ -19,7 +19,7 @@ export interface Provider {
   checkConnection(): Promise<ConnectResponse | void>;
   connect(): Promise<ConnectResponse | void>;
   disconnect(): Promise<ConnectResponse | void>;
-  // subscribe(params: SubscribeParams): SubscribeResponse;
+  subscribe(params: SubscribeParams): SubscribeResponse;
   request<T extends ProviderMethod>(params: RawProviderRequest<T>): Promise<RawProviderApiResponse<T>>;
 }
 /**
@@ -228,16 +228,16 @@ export class ProviderRpcClient {
    */
   public async signData(args: ProviderApiRequestParams<'signData'>): Promise<ProviderApiResponse<'signData'>> {
     await this.ensureInitialized();
-    return await this._api.signData(args);
+    return this._api.signData(args);
   }
 
   /**
    * Sends an internal message from the user account.
    * Shows an approval window to the user.
    */
-  public async sendMessage(args: ProviderApiRequestParams<'sendMessage'>): Promise<void> {
+  public async sendMessage(args: ProviderApiRequestParams<'sendMessage'>): Promise<ProviderApiResponse<'sendMessage'>> {
     await this.ensureInitialized();
-    await this._api.sendMessage({
+    return this._api.sendMessage({
       abi: args.abi,
       action: args.action,
       address: args.address,
@@ -256,9 +256,9 @@ export class ProviderRpcClient {
    * Sends an internal message from the user account.
    * Shows an approval window to the user.
    */
-  public async sendTransaction(args: ProviderApiRequestParams<'sendTransaction'>): Promise<void> {
+  public async sendTransaction(args: ProviderApiRequestParams<'sendTransaction'>): Promise<ProviderApiResponse<'sendTransaction'>> {
       await this.ensureInitialized();
-      await this._api.sendTransaction({
+      return this._api.sendTransaction({
         amount: args.amount,
         bounce: args.bounce,
         comment: args.comment,
