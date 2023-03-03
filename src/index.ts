@@ -40,12 +40,12 @@ export declare type ProviderProperties = {
 
 declare global {
   interface Window {
-      everscale: Provider | undefined;
+    surfkeeper: Provider | undefined;
   }
 }
 const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
-const getProvider = (): Provider | undefined => (isBrowser ? window.everscale : undefined);
+const getProvider = (): Provider | undefined => (isBrowser ? window.surfkeeper : undefined);
 
 let isPageLoaded: Promise<void>;
 if (document.readyState === 'complete' || !isBrowser) {
@@ -67,7 +67,7 @@ export async function hasSurfKeeperProvider(): Promise<boolean> {
   }
 
   await isPageLoaded;
-  return Boolean(window.everscale) && window.everscale!.isSurf;
+  return Boolean(window.surfkeeper) && window.surfkeeper!.isSurf;
 }
 
 /**
@@ -134,7 +134,7 @@ export class ProviderRpcClient {
                 if (this._provider != null) {
                   resolve();
                 } else {
-                  const eventName = window.everscale?.isSurf === true ? 'surfkeeper#initialized' : 'surfkeeper#initialized';
+                  const eventName = window.surfkeeper?.isSurf === true ? 'surfkeeper#initialized' : 'surfkeeper#initialized';
                   window.addEventListener(eventName, _ => {
                     this._provider = getProvider();
                     resolve();

@@ -3,7 +3,7 @@ import terser from '@rollup/plugin-terser';
 import path from 'path';
 
 const outDir = 'vanilla';
-const libName = 'everscale';
+const libName = 'surfkeeper';
 
 export default {
   input: 'src/index.ts',
@@ -11,12 +11,12 @@ export default {
     {
       format: 'iife',
       name: libName,
-      file: path.join(outDir, 'everscale.js'),
+      file: path.join(outDir, 'surfkeeper.js'),
     },
     {
       format: 'iife',
       name: libName,
-      file: path.join(outDir, 'everscale.min.js'),
+      file: path.join(outDir, 'surfkeeper.min.js'),
       plugins: [terser()],
     },
   ],
