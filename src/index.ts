@@ -115,7 +115,7 @@ export class ProviderRpcClient {
       {},
       {
         get:
-          <K extends SubscriptionType>(_object: ProviderRpcClient, type: "subscription") =>
+          <K extends SubscriptionType>(_object: ProviderRpcClient) =>
           (params: RawProviderSubscriptionRequestParams<K>) => {
             if (this._provider != null) {
               return this._provider.subscribe(params);
