@@ -16,11 +16,6 @@
 ```shell
 npm install --save surf-keeper-provider
 ```
-### Contents
-
-- [`src/index.ts`](./src/index.ts) - main RPC provider description
-- [`src/api.ts`](./src/api.ts) - RPC interface description
-- [`src/models.ts`](./src/models.ts) - general models, used in RPC interface
 
 ### Methods
 
@@ -168,6 +163,31 @@ npm install --save surf-keeper-provider
     ```jsx
     const response = await rpc.‘signData’({
         data: 'te6ccgEBAQEAKAAASw4E0p6AD5fz9JsGWfbBhP0Bwq9+jk0X3za9rhuI7A1H3DxC0QBw',
+    });
+    ```
+    
+- **subscribe**
+    
+    Subscribes to data updates.
+    
+    ```jsx
+    input: {
+    	type: string; // Subscription type, for now only "balance" is available
+    	address: string; // Target address
+    	listener: (value: string) => void; // Subscription data update handler
+    };
+    output: {
+    	remove: () => void; // Base64 encoded signature bytes (data is guaranteed to be 64 bytes long)
+    };
+    ```
+    
+    Example:
+    
+    ```jsx
+    const response = rpc.‘subscribe’({
+    	type: "balance",
+    	address: "0x000000..000",
+    	listener: (val) => console.log("Balance uodated: ", val)
     });
     ```
 ### Example
