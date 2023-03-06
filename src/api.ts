@@ -1,211 +1,221 @@
-import { Abi, Address, EverscaleNetNameKey } from "./models";
+import { Abi, Address, EverscaleNetNameKey, SubscriptionResponse, SubscriptionType } from "./models";
 
 /**
- * @category Provider Api
+ * @category Subscription
  */
-export type ProviderEvents<Addr = Address> = {
-    /**
-     * Called when inpage provider connects to the extension
-     */
-    connected: Record<string, never>;
-  
-    /**
-     * Called when inpage provider disconnects from extension
-     */
-    disconnected: Error;
-  
-    /**
-     * Called each time the user changes network
-     */
-    networkChanged: {
+export declare type SubscriptionApi<T extends SubscriptionType, Addr = Address> = {
+  /**
+   * Signs arbitrary data.
+   */
+  subscribe: {
+    input: {
       /**
-       * Network group name
-       *
-       * @deprecated `networkId` should be used instead
+       * Base64 encoded arbitrary bytes
        */
-      selectedConnection: string;
-      /**
-       * Numeric network id
-       */
-      networkId: number;
+      type: SubscriptionType;
+      listener: SubscriptionListener<T>;
+      address: string;
     };
-  
-    /**
-     * Called when permissions are changed.
-     * Mostly when account has been removed from the current `accountInteraction` permission,
-     * or disconnect method was called
-     */
-    permissionsChanged: {
-      // permissions: Partial<Permissions<Addr>>;
-    };
-  
-    /**
-     * Called when permissions are changed.
-     * Mostly when account has been removed from the current `accountInteraction` permission,
-     * or disconnect method was called
-     */
-    accountChanged: {
-      account: Addr;
-    };
+    output: SubscriptionResponse;
   };
+}
 
 /**
  * @category Provider
  */
 export declare type ProviderApi<Addr = Address> = {
-    /**
-     * Signs arbitrary data.
-     */
-    signData: {
-        input: {
-            /**
-             * Base64 encoded arbitrary bytes
-             */
-            data: string;
-        };
-        output: {
-            /**
-             * Base64 encoded signature bytes (data is guaranteed to be 64 bytes long)
-             */
-            signature: string;
-        };
+  /**
+   * Signs arbitrary data.
+   */
+  signData: {
+    input: {
+      /**
+       * Base64 encoded arbitrary bytes
+       */
+      data: string;
     };
-    /**
-     * Sends an internal message from the user account.
-     * Shows an approval window to the user.
-     */
-    sendMessage: {
-        input: {
-            /**
-             * Contract abi
-             */
-            abi: Abi;
-            /**
-             * Name of action to be performed by message send
-             */
-            action?: string;
-            /**
-             * Message destination address
-             */
-            address: Address;
-            /**
-             * Amount of nano EVER to send
-             */
-            amount: string;
-            /**
-             * Whether to bounce message back on error
-             */
-            bounce: boolean;
+    output: {
+      /**
+       * Base64 encoded signature bytes (data is guaranteed to be 64 bytes long)
+       */
+      signature: string;
+    };
+  };
+  /**
+   * Sends an internal message from the user account.
+   * Shows an approval window to the user.
+   */
+  sendMessage: {
+    input: {
+      /**
+       * Contract abi
+       */
+      abi: Abi;
+      /**
+       * Name of action to be performed by message send
+       */
+      action?: string;
+      /**
+       * Message destination address
+       */
+      address: Address;
+      /**
+       * Amount of nano EVER to send
+       */
+      amount: string;
+      /**
+       * Whether to bounce message back on error
+       */
+      bounce: boolean;
 
-            callSet: {
-                /**
-                 * Name of contract function to be sent to the contract
-                 */
-                functionName: string;
-                /**
-                 * Name of contract function to be sent to the contract
-                 */
-                input: Record<string, any>;
-                /**
-                 * Options header for function 
-                 */
-                // header?: FunctionHeader;
-                header?: any;
-            };
-            /**
-             * Name of network to send message in
-             */
-            net: EverscaleNetNameKey;
-        };
-        output: {
-        };
+      callSet: {
+        /**
+         * Name of contract function to be sent to the contract
+         */
+        functionName: string;
+        /**
+         * Name of contract function to be sent to the contract
+         */
+        input: Record<string, any>;
+        /**
+         * Options header for function
+         */
+        // header?: FunctionHeader;
+        header?: any;
+      };
+      /**
+       * Name of network to send message in
+       */
+      net: EverscaleNetNameKey;
     };
-    /**
-     * Sends transaction with provided params.
-     */
-    sendTransaction: {
-        input: {
-            /**
-             * Amount of nano EVER to send
-             */
-            amount: string;
-            /**
-             * Whether to bounce message back on error
-             */
-            bounce: boolean;
-            /**
-             * Comment for the transaction to send it in payload
-             */
-            comment: string;
-            /**
-             * Name of network to send message in
-             */
-            net: EverscaleNetNameKey;
-            /**
-             * Address to send transaction to
-             */
-            to: string;
-        };
-        output: {
-        };
+    output: {};
+  };
+  /**
+   * Sends transaction with provided params.
+   */
+  sendTransaction: {
+    input: {
+      /**
+       * Amount of nano EVER to send
+       */
+      amount: string;
+      /**
+       * Whether to bounce message back on error
+       */
+      bounce: boolean;
+      /**
+       * Comment for the transaction to send it in payload
+       */
+      comment: string;
+      /**
+       * Name of network to send message in
+       */
+      net: EverscaleNetNameKey;
+      /**
+       * Address to send transaction to
+       */
+      to: string;
     };
+    output: {};
+  };
 };
 
-
 /**
  * @category Provider Api
  */
-export type ProviderEvent = keyof ProviderEvents;
-
-/**
- * @category Provider Api
- */
-export type ProviderEventData<T extends ProviderEvent, Addr = Address> = ProviderEvents<Addr>[T];
-
-/**
- * @category Provider Api
- */
-export type RawProviderEventData<T extends ProviderEvent> = ProviderEventData<T, string>;
-
+export type ApiMethod = keyof ProviderApi;
 
 
 /**
  * @category Provider Api
  */
-export type ProviderMethod = keyof ProviderApi;
-
-/**
- * @category Provider Api
- */
-export type ProviderApiRequestParams<T extends ProviderMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
+// prettier-ignore
+export type ProviderApiRequestParams<T extends ApiMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
   input: infer I;
 }
   ? I
   : undefined;
 
+// prettier-ignore
 /**
  * @category Provider Api
  */
-export type RawProviderApiRequestParams<T extends ProviderMethod> = ProviderApiRequestParams<T, string>;
+export type RawProviderApiRequestParams<T extends ApiMethod> = ProviderApiRequestParams<T, string>;
 
+// prettier-ignore
 /**
  * @category Provider Api
  */
-export type ProviderApiResponse<T extends ProviderMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
+export type ProviderApiResponse<T extends ApiMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
   output: infer O;
 }
   ? O
   : undefined;
 
+// prettier-ignore
 /**
  * @category Provider Api
  */
-export type RawProviderApiResponse<T extends ProviderMethod> = ProviderApiResponse<T, string>;
+export type RawProviderApiResponse<T extends ApiMethod> = ProviderApiResponse<T, string>;
+
+// prettier-ignore
+/**
+ * @category Provider Api
+ */
+export interface RawProviderRequest<T extends ApiMethod> {
+  method: T;
+  params: RawProviderApiRequestParams<T>;
+}
+
+
+
+/**
+ * @category Subscription Api
+ */
+export type SubscriptionMethod = keyof SubscriptionApi<SubscriptionType>;
+
+// prettier-ignore
+/**
+ * @category Subscription Api
+ */
+export type SubscriptionListener<T extends SubscriptionType> = (args: SubscriptionListenerParams<T>) => void;
+
+// prettier-ignore
+/**
+ * @category Subscription Api
+ */
+export type SubscriptionListenerParams<T extends SubscriptionType> = T extends infer R ? R : never;
+
+
 
 /**
  * @category Provider Api
  */
-export interface RawProviderRequest<T extends ProviderMethod> {
-  method: T;
-  params: RawProviderApiRequestParams<T>;
+// prettier-ignore
+export type ProviderSubscriptionRequestParams<T extends SubscriptionType, Addr = Address> = SubscriptionApi<T, Addr>[SubscriptionMethod] extends {
+  input: infer I;
 }
+  ? I
+  : undefined;
+
+// prettier-ignore
+/**
+ * @category Provider Api
+ */
+export type RawProviderSubscriptionRequestParams<T extends SubscriptionType> = ProviderSubscriptionRequestParams<T, string>;
+
+// prettier-ignore
+/**
+ * @category Provider Api
+ */
+export type ProviderSubscriptionResponse<T extends SubscriptionType, Addr = Address> = SubscriptionApi<T, Addr>[SubscriptionMethod] extends {
+  output: infer O;
+}
+  ? O
+  : undefined;
+
+// prettier-ignore
+/**
+ * @category Provider Api
+ */
+export type RawProviderSubscriptionResponse<T extends SubscriptionType> = ProviderSubscriptionResponse<T, string>;
