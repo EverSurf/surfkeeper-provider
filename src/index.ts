@@ -196,10 +196,15 @@ export class ProviderRpcClient {
                   // TODO: support the `surfkeeper#initialized` event in Extension
                   // const eventName =
                   //   window.surfkeeper?.isSurf === true ? 'surfkeeper#initialized' : 'surfkeeper#initialized';
-                  // window.addEventListener(eventName, _ => {
+                  // const eventListener = () => {
+                  //   // Set the provider
                   //   this._provider = getProvider();
+                  //   // Resolve
                   //   resolve();
-                  // });
+                  //   // Stop listening to the event
+                  //   window.removeEventListener(eventName, eventListener);
+                  // };
+                  // window.addEventListener(eventName, eventListener);
                   //
                   // Resolve for now and remove the next line once the event above is supported:
                   resolve();
