@@ -135,36 +135,30 @@ export class ProviderRpcClient {
     this._properties = properties;
 
     // Wrap provider requests
-    this._api = new Proxy(
-      {},
-      {
-        get:
-          <K extends ApiMethod>(_object: ProviderRpcClient, method: K) =>
-          (params: RawProviderApiRequestParams<K>) => {
-            if (this._provider != null) {
-              return this._provider.request({ method, params });
-            } else {
-              throw new ProviderNotInitializedException();
-            }
-          },
-      },
-    ) as unknown as RawProviderApiMethods;
+    this._api = new Proxy<RawProviderApiMethods>({} as unknown as RawProviderApiMethods, {
+      get:
+        <K extends ApiMethod>(_object: RawProviderApiMethods, method: K) =>
+        (params: RawProviderApiRequestParams<K>) => {
+          if (this._provider != null) {
+            return this._provider.request({ method, params });
+          } else {
+            throw new ProviderNotInitializedException();
+          }
+        },
+    });
 
     // Wrap provider requests
-    this._subscribe = new Proxy(
-      {},
-      {
-        get:
-          <K extends SubscriptionType>(_object: ProviderRpcClient) =>
-          (params: RawProviderSubscriptionRequestParams<K>) => {
-            if (this._provider != null) {
-              return this._provider.subscribe(params);
-            } else {
-              throw new ProviderNotInitializedException();
-            }
-          },
-      },
-    ) as unknown as RawProviderSubscriptionMethods;
+    this._subscribe = new Proxy<RawProviderSubscriptionMethods>({} as unknown as RawProviderSubscriptionMethods, {
+      get:
+        <K extends SubscriptionType>(_object: RawProviderSubscriptionMethods) =>
+        (params: RawProviderSubscriptionRequestParams<K>) => {
+          if (this._provider != null) {
+            return this._provider.subscribe(params);
+          } else {
+            throw new ProviderNotInitializedException();
+          }
+        },
+    });
 
     if (properties.forceUseFallback === true) {
       this._initializationPromise =
