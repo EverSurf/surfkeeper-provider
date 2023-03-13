@@ -80,9 +80,13 @@ if (document.readyState === 'complete' || !isBrowser) {
   isPageLoaded = Promise.resolve();
 } else {
   isPageLoaded = new Promise<void>(resolve => {
-    window.addEventListener('load', () => {
+    const loadEventListener = () => {
+      // Resolve
       resolve();
-    });
+      // Stop listening to the event
+      window.removeEventListener('load', loadEventListener);
+    };
+    window.addEventListener('load', loadEventListener);
   });
 }
 
@@ -189,12 +193,16 @@ export class ProviderRpcClient {
                 if (this._provider != null) {
                   resolve();
                 } else {
-                  const eventName =
-                    window.surfkeeper?.isSurf === true ? 'surfkeeper#initialized' : 'surfkeeper#initialized';
-                  window.addEventListener(eventName, _ => {
-                    this._provider = getProvider();
-                    resolve();
-                  });
+                  // TODO: support the `surfkeeper#initialized` event in Extension
+                  // const eventName =
+                  //   window.surfkeeper?.isSurf === true ? 'surfkeeper#initialized' : 'surfkeeper#initialized';
+                  // window.addEventListener(eventName, _ => {
+                  //   this._provider = getProvider();
+                  //   resolve();
+                  // });
+                  //
+                  // Resolve for now and remove the next line once the event above is supported:
+                  resolve();
                 }
               }),
           )
