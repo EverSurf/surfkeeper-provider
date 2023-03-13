@@ -71,7 +71,7 @@ npm install --save surf-keeper-provider
   input: {
   	abi: string; // Contract abi
   	address: string; // Address string
-  	net: TONNetNameKey; // Name of network to send message in
+  	net: EverscaleNetNameKey; // Name of network to send message in, i.e. 'mainnet' | 'devnet'
   	callSet: {
   		functionName: string; // Name of contract function to be sent to the contract
   		input: Record<string, any>; // Input for the contract function
@@ -107,7 +107,7 @@ npm install --save surf-keeper-provider
     amount: string; // Amount of nano EVER to send
     bounce: boolean; // Whether to bounce message back on error
     comment: string; // Comment for the transaction to send it in payload
-    net: TONNetNameKey; // Name of network to send transaction in
+    net: EverscaleNetNameKey; // Name of network to send transaction in, i.e. 'mainnet' | 'devnet'
     to: string; // Address to send transaction to
   }
   output: {
