@@ -9,10 +9,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "prepare": "husky install",
     "build": "tsc",
     "build:vanilla": "rollup --config rollup.config.ts --configPlugin typescript",
     "build:docs": "typedoc",
-    "lint": "npx eslint ."
+    "lint": "eslint .",
+    "prettier": "prettier --check .",
+    "tsc": "tsc",
+    "pre-commit": "yarn lint && yarn tsc && yarn prettier"
   },
   "author": "Vit Pankin",
   "license": "GPL-3.0",
@@ -25,6 +29,8 @@
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "prettier": "^2.8.4",
     "rollup": "^3.9.0",
     "typedoc": "^0.23.10",
     "typedoc-plugin-missing-exports": "^0.23.0",

@@ -10,13 +10,13 @@ import {
   RawProviderSubscriptionResponse,
   ProviderSubscriptionRequestParams,
 } from './api';
-import { Address, ConnectResponse, SubscriptionResponse, SubscriptionParams, SubscriptionType } from './models';
+import { ConnectResponse, SubscriptionResponse, SubscriptionParams, SubscriptionType } from './models';
 export * from './api';
 export * from './models';
 
 /**
-* @category Provider
-*/
+ * @category Provider
+ */
 export interface Provider {
   readonly isSurf: boolean;
 
@@ -27,8 +27,8 @@ export interface Provider {
   request<T extends ApiMethod>(params: RawProviderRequest<T>): Promise<RawProviderApiResponse<T>>;
 }
 /**
-* @category Provider
-*/
+ * @category Provider
+ */
 export declare type ProviderProperties = {
   /***
    * Ignore injected provider and try to use `fallback` instead.
@@ -56,15 +56,15 @@ if (document.readyState === 'complete' || !isBrowser) {
   isPageLoaded = Promise.resolve();
 } else {
   isPageLoaded = new Promise<void>(resolve => {
-  window.addEventListener('load', () => {
-    resolve();
+    window.addEventListener('load', () => {
+      resolve();
+    });
   });
-});
 }
 
 /**
-* @category Provider
-*/
+ * @category Provider
+ */
 export async function hasSurfKeeperProvider(): Promise<boolean> {
   if (!isBrowser) {
     return false;
@@ -75,8 +75,8 @@ export async function hasSurfKeeperProvider(): Promise<boolean> {
 }
 
 /**
-* @category Provider
-*/
+ * @category Provider
+ */
 export class ProviderRpcClient {
   private readonly _properties: ProviderProperties;
   private readonly _api: RawProviderApiMethods;
@@ -91,8 +91,6 @@ export class ProviderRpcClient {
 
   constructor(properties: ProviderProperties = {}) {
     this._properties = properties;
-
-    const self = this;
 
     // Wrap provider requests
     this._api = new Proxy(
@@ -124,7 +122,7 @@ export class ProviderRpcClient {
             }
           },
       },
-    ) as unknown as RawProviderSubscriptionMethods;  
+    ) as unknown as RawProviderSubscriptionMethods;
 
     if (properties.forceUseFallback === true) {
       this._initializationPromise =
@@ -155,7 +153,8 @@ export class ProviderRpcClient {
                 if (this._provider != null) {
                   resolve();
                 } else {
-                  const eventName = window.surfkeeper?.isSurf === true ? 'surfkeeper#initialized' : 'surfkeeper#initialized';
+                  const eventName =
+                    window.surfkeeper?.isSurf === true ? 'surfkeeper#initialized' : 'surfkeeper#initialized';
                   window.addEventListener(eventName, _ => {
                     this._provider = getProvider();
                     resolve();
@@ -265,11 +264,11 @@ export class ProviderRpcClient {
       amount: args.amount,
       bounce: args.bounce,
       callSet: {
-          functionName: args.callSet.functionName,
-          input: args.callSet.input,
-          header: args.callSet.header
+        functionName: args.callSet.functionName,
+        input: args.callSet.input,
+        header: args.callSet.header,
       },
-      net: args.net
+      net: args.net,
     });
   }
 
@@ -277,14 +276,16 @@ export class ProviderRpcClient {
    * Sends an internal message from the user account.
    * Shows an approval window to the user.
    */
-  public async sendTransaction(args: ProviderApiRequestParams<'sendTransaction'>): Promise<ProviderApiResponse<'sendTransaction'>> {
+  public async sendTransaction(
+    args: ProviderApiRequestParams<'sendTransaction'>,
+  ): Promise<ProviderApiResponse<'sendTransaction'>> {
     await this.ensureInitialized();
     return this._api.sendTransaction({
       amount: args.amount,
       bounce: args.bounce,
       comment: args.comment,
       net: args.net,
-      to: args.to
+      to: args.to,
     });
   }
   /**
@@ -295,7 +296,7 @@ export class ProviderRpcClient {
     return this._subscribe.subscribe({
       type: args.type,
       address: args.address,
-      listener: args.listener
+      listener: args.listener,
     });
   }
 }
@@ -318,18 +319,15 @@ export class ProviderNotInitializedException extends Error {
   }
 }
 
-// prettier-ignore
 /**
  * @category Provider
  */
-export type RawRpcMethod<P extends ApiMethod | SubscriptionMethod> =
-  P extends ApiMethod
-    ? (args: RawProviderApiRequestParams<P>) => Promise<RawProviderApiResponse<P>>
+export type RawRpcMethod<P extends ApiMethod | SubscriptionMethod> = P extends ApiMethod
+  ? (args: RawProviderApiRequestParams<P>) => Promise<RawProviderApiResponse<P>>
   : P extends SubscriptionMethod
-    ? (args: RawProviderSubscriptionRequestParams<SubscriptionType>) => RawProviderSubscriptionResponse<SubscriptionType>
-    : never;
+  ? (args: RawProviderSubscriptionRequestParams<SubscriptionType>) => RawProviderSubscriptionResponse<SubscriptionType>
+  : never;
 
-// prettier-ignore
 /**
  * @category Provider
  */
@@ -337,7 +335,6 @@ export type RawProviderApiMethods = {
   [P in ApiMethod]: RawRpcMethod<P>;
 };
 
-// prettier-ignore
 /**
  * @category Provider
  */

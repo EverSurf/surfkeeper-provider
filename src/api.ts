@@ -1,4 +1,4 @@
-import { Abi, Address, EverscaleNetNameKey, SubscriptionResponse, SubscriptionType } from "./models";
+import { Abi, Address, EverscaleNetNameKey, SubscriptionResponse, SubscriptionType } from './models';
 
 /**
  * @category Subscription
@@ -14,11 +14,11 @@ export declare type SubscriptionApi<T extends SubscriptionType, Addr = Address> 
        */
       type: SubscriptionType;
       listener: SubscriptionListener<T>;
-      address: string;
+      address: Addr;
     };
     output: SubscriptionResponse;
   };
-}
+};
 
 /**
  * @category Provider
@@ -58,7 +58,7 @@ export declare type ProviderApi<Addr = Address> = {
       /**
        * Message destination address
        */
-      address: Address;
+      address: Addr;
       /**
        * Amount of nano EVER to send
        */
@@ -125,24 +125,20 @@ export declare type ProviderApi<Addr = Address> = {
  */
 export type ApiMethod = keyof ProviderApi;
 
-
 /**
  * @category Provider Api
  */
-// prettier-ignore
 export type ProviderApiRequestParams<T extends ApiMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
   input: infer I;
 }
   ? I
   : undefined;
 
-// prettier-ignore
 /**
  * @category Provider Api
  */
 export type RawProviderApiRequestParams<T extends ApiMethod> = ProviderApiRequestParams<T, string>;
 
-// prettier-ignore
 /**
  * @category Provider Api
  */
@@ -152,13 +148,11 @@ export type ProviderApiResponse<T extends ApiMethod, Addr = Address> = ProviderA
   ? O
   : undefined;
 
-// prettier-ignore
 /**
  * @category Provider Api
  */
 export type RawProviderApiResponse<T extends ApiMethod> = ProviderApiResponse<T, string>;
 
-// prettier-ignore
 /**
  * @category Provider Api
  */
@@ -167,54 +161,53 @@ export interface RawProviderRequest<T extends ApiMethod> {
   params: RawProviderApiRequestParams<T>;
 }
 
-
-
 /**
  * @category Subscription Api
  */
 export type SubscriptionMethod = keyof SubscriptionApi<SubscriptionType>;
 
-// prettier-ignore
 /**
  * @category Subscription Api
  */
 export type SubscriptionListener<T extends SubscriptionType> = (args: SubscriptionListenerParams<T>) => void;
 
-// prettier-ignore
 /**
  * @category Subscription Api
  */
 export type SubscriptionListenerParams<T extends SubscriptionType> = T extends infer R ? R : never;
 
-
-
 /**
  * @category Provider Api
  */
-// prettier-ignore
-export type ProviderSubscriptionRequestParams<T extends SubscriptionType, Addr = Address> = SubscriptionApi<T, Addr>[SubscriptionMethod] extends {
+export type ProviderSubscriptionRequestParams<T extends SubscriptionType, Addr = Address> = SubscriptionApi<
+  T,
+  Addr
+>[SubscriptionMethod] extends {
   input: infer I;
 }
   ? I
   : undefined;
 
-// prettier-ignore
 /**
  * @category Provider Api
  */
-export type RawProviderSubscriptionRequestParams<T extends SubscriptionType> = ProviderSubscriptionRequestParams<T, string>;
+export type RawProviderSubscriptionRequestParams<T extends SubscriptionType> = ProviderSubscriptionRequestParams<
+  T,
+  string
+>;
 
-// prettier-ignore
 /**
  * @category Provider Api
  */
-export type ProviderSubscriptionResponse<T extends SubscriptionType, Addr = Address> = SubscriptionApi<T, Addr>[SubscriptionMethod] extends {
+export type ProviderSubscriptionResponse<T extends SubscriptionType, Addr = Address> = SubscriptionApi<
+  T,
+  Addr
+>[SubscriptionMethod] extends {
   output: infer O;
 }
   ? O
   : undefined;
 
-// prettier-ignore
 /**
  * @category Provider Api
  */

@@ -1,13 +1,8 @@
-import { SubscriptionListener } from "./api";
+import { SubscriptionListener } from './api';
 
-type RequestMethods =
-  | "connect"
-  | "disconnect"
-  | "checkConnect"
-  | "subscribeToBalance"
-  | "unsubscribeFromBalance";
-export type SubscriptionType = "balance";
-export type EverscaleNetNameKey = "mainnet" | "devnet";
+type RequestMethods = 'connect' | 'disconnect' | 'checkConnect' | 'subscribeToBalance' | 'unsubscribeFromBalance';
+export type SubscriptionType = 'balance';
+export type EverscaleNetNameKey = 'mainnet' | 'devnet';
 
 export interface Request {
   method: RequestMethods;
