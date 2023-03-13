@@ -31,7 +31,7 @@ export interface Provider {
  */
 export declare type ProviderProperties = {
   /***
-   * Ignore injected provider and try to use `fallback` instead.
+   * Ignore injected provider and try to use {@link  ProviderProperties.fallback} instead.
    * @defaultValue false
    */
   forceUseFallback?: boolean;
@@ -42,11 +42,35 @@ export declare type ProviderProperties = {
   fallback?: () => Promise<Provider>;
 };
 
+/**
+ * @remarks Provider
+ */
+type RawRpcMethod<P extends ApiMethod | SubscriptionMethod> = P extends ApiMethod
+  ? (args: RawProviderApiRequestParams<P>) => Promise<RawProviderApiResponse<P>>
+  : P extends SubscriptionMethod
+  ? (args: RawProviderSubscriptionRequestParams<SubscriptionType>) => RawProviderSubscriptionResponse<SubscriptionType>
+  : never;
+
+/**
+ * @remarks Provider
+ */
+type RawProviderApiMethods = {
+  [P in ApiMethod]: RawRpcMethod<P>;
+};
+
+/**
+ * @remarks Provider
+ */
+type RawProviderSubscriptionMethods = {
+  [P in SubscriptionMethod]: RawRpcMethod<P>;
+};
+
 declare global {
   interface Window {
     surfkeeper: Provider | undefined;
   }
 }
+
 const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
 const getProvider = (): Provider | undefined => (isBrowser ? window.surfkeeper : undefined);
@@ -72,6 +96,24 @@ export async function hasSurfKeeperProvider(): Promise<boolean> {
 
   await isPageLoaded;
   return Boolean(window.surfkeeper) && window.surfkeeper!.isSurf;
+}
+
+/**
+ * @remarks Provider
+ */
+export class ProviderNotFoundException extends Error {
+  constructor() {
+    super('Everscale provider was not found');
+  }
+}
+
+/**
+ * @remarks Provider
+ */
+export class ProviderNotInitializedException extends Error {
+  constructor() {
+    super('Everscale provider was not initialized yet');
+  }
 }
 
 /**
@@ -300,44 +342,3 @@ export class ProviderRpcClient {
     });
   }
 }
-
-/**
- * @remarks Provider
- */
-export class ProviderNotFoundException extends Error {
-  constructor() {
-    super('Everscale provider was not found');
-  }
-}
-
-/**
- * @remarks Provider
- */
-export class ProviderNotInitializedException extends Error {
-  constructor() {
-    super('Everscale provider was not initialized yet');
-  }
-}
-
-/**
- * @remarks Provider
- */
-export type RawRpcMethod<P extends ApiMethod | SubscriptionMethod> = P extends ApiMethod
-  ? (args: RawProviderApiRequestParams<P>) => Promise<RawProviderApiResponse<P>>
-  : P extends SubscriptionMethod
-  ? (args: RawProviderSubscriptionRequestParams<SubscriptionType>) => RawProviderSubscriptionResponse<SubscriptionType>
-  : never;
-
-/**
- * @remarks Provider
- */
-export type RawProviderApiMethods = {
-  [P in ApiMethod]: RawRpcMethod<P>;
-};
-
-/**
- * @remarks Provider
- */
-export type RawProviderSubscriptionMethods = {
-  [P in SubscriptionMethod]: RawRpcMethod<P>;
-};
