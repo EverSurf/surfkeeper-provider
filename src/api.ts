@@ -1,7 +1,7 @@
 import { Abi, Address, EverscaleNetNameKey, SubscriptionResponse, SubscriptionType } from './models';
 
 /**
- * @category Subscription
+ * @remarks Subscription
  */
 export declare type SubscriptionApi<T extends SubscriptionType, Addr = Address> = {
   /**
@@ -21,7 +21,7 @@ export declare type SubscriptionApi<T extends SubscriptionType, Addr = Address> 
 };
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export declare type ProviderApi<Addr = Address> = {
   /**
@@ -114,19 +114,19 @@ export declare type ProviderApi<Addr = Address> = {
       /**
        * Address to send transaction to
        */
-      to: string;
+      to: Addr;
     };
     output: {};
   };
 };
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type ApiMethod = keyof ProviderApi;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type ProviderApiRequestParams<T extends ApiMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
   input: infer I;
@@ -135,12 +135,12 @@ export type ProviderApiRequestParams<T extends ApiMethod, Addr = Address> = Prov
   : undefined;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type RawProviderApiRequestParams<T extends ApiMethod> = ProviderApiRequestParams<T, string>;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type ProviderApiResponse<T extends ApiMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
   output: infer O;
@@ -149,12 +149,12 @@ export type ProviderApiResponse<T extends ApiMethod, Addr = Address> = ProviderA
   : undefined;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type RawProviderApiResponse<T extends ApiMethod> = ProviderApiResponse<T, string>;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export interface RawProviderRequest<T extends ApiMethod> {
   method: T;
@@ -162,22 +162,22 @@ export interface RawProviderRequest<T extends ApiMethod> {
 }
 
 /**
- * @category Subscription Api
+ * @remarks Subscription Api
  */
 export type SubscriptionMethod = keyof SubscriptionApi<SubscriptionType>;
 
 /**
- * @category Subscription Api
+ * @remarks Subscription Api
  */
 export type SubscriptionListener<T extends SubscriptionType> = (args: SubscriptionListenerParams<T>) => void;
 
 /**
- * @category Subscription Api
+ * @remarks Subscription Api
  */
 export type SubscriptionListenerParams<T extends SubscriptionType> = T extends infer R ? R : never;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type ProviderSubscriptionRequestParams<T extends SubscriptionType, Addr = Address> = SubscriptionApi<
   T,
@@ -189,7 +189,7 @@ export type ProviderSubscriptionRequestParams<T extends SubscriptionType, Addr =
   : undefined;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type RawProviderSubscriptionRequestParams<T extends SubscriptionType> = ProviderSubscriptionRequestParams<
   T,
@@ -197,7 +197,7 @@ export type RawProviderSubscriptionRequestParams<T extends SubscriptionType> = P
 >;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type ProviderSubscriptionResponse<T extends SubscriptionType, Addr = Address> = SubscriptionApi<
   T,
@@ -209,6 +209,6 @@ export type ProviderSubscriptionResponse<T extends SubscriptionType, Addr = Addr
   : undefined;
 
 /**
- * @category Provider Api
+ * @remarks Provider Api
  */
 export type RawProviderSubscriptionResponse<T extends SubscriptionType> = ProviderSubscriptionResponse<T, string>;

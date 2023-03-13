@@ -15,7 +15,7 @@ export * from './api';
 export * from './models';
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export interface Provider {
   readonly isSurf: boolean;
@@ -27,12 +27,12 @@ export interface Provider {
   request<T extends ApiMethod>(params: RawProviderRequest<T>): Promise<RawProviderApiResponse<T>>;
 }
 /**
- * @category Provider
+ * @remarks Provider
  */
 export declare type ProviderProperties = {
   /***
    * Ignore injected provider and try to use `fallback` instead.
-   * @default false
+   * @defaultValue false
    */
   forceUseFallback?: boolean;
   /***
@@ -63,7 +63,7 @@ if (document.readyState === 'complete' || !isBrowser) {
 }
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export async function hasSurfKeeperProvider(): Promise<boolean> {
   if (!isBrowser) {
@@ -75,7 +75,7 @@ export async function hasSurfKeeperProvider(): Promise<boolean> {
 }
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export class ProviderRpcClient {
   private readonly _properties: ProviderProperties;
@@ -302,7 +302,7 @@ export class ProviderRpcClient {
 }
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export class ProviderNotFoundException extends Error {
   constructor() {
@@ -311,7 +311,7 @@ export class ProviderNotFoundException extends Error {
 }
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export class ProviderNotInitializedException extends Error {
   constructor() {
@@ -320,7 +320,7 @@ export class ProviderNotInitializedException extends Error {
 }
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export type RawRpcMethod<P extends ApiMethod | SubscriptionMethod> = P extends ApiMethod
   ? (args: RawProviderApiRequestParams<P>) => Promise<RawProviderApiResponse<P>>
@@ -329,14 +329,14 @@ export type RawRpcMethod<P extends ApiMethod | SubscriptionMethod> = P extends A
   : never;
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export type RawProviderApiMethods = {
   [P in ApiMethod]: RawRpcMethod<P>;
 };
 
 /**
- * @category Provider
+ * @remarks Provider
  */
 export type RawProviderSubscriptionMethods = {
   [P in SubscriptionMethod]: RawRpcMethod<P>;

@@ -11,7 +11,7 @@
   "parserOptions": {
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "prettier"],
+  "plugins": ["@typescript-eslint", "eslint-plugin-tsdoc", "prettier"],
   "ignorePatterns": ["dist/*"],
   "rules": {
     "no-constant-condition": "off",
@@ -27,6 +27,7 @@
         "ignoreReadBeforeAssign": false
       }
     ],
+    "tsdoc/syntax": "error",
     "camelcase": "error",
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
