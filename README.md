@@ -1,6 +1,6 @@
 <p align="center">
     <h3 align="center">Surf Keeper browser provider</h3>
-    <p align="center">Provider interface for Surf Keeper extension of the Everscale blockchain</p>
+    <p align="center">Surf Keeper Provider package simplifies the interaction with <a href="https://ever.surf/download/" target="_blank">Surf Keeper Extension</a> by hiding some boilerplate and providing a more user-friendly API.</p>
     <p align="center">
         <a href="/LICENSE">
             <img alt="GitHub" src="https://img.shields.io/github/license/broxus/everscale-inpage-provider" />
@@ -37,8 +37,7 @@ npm install --save surf-keeper-provider
   const result = await rpc.connect();
   ```
 - **connectStatus**
-  Requests new permissions for current origin.
-  Shows an approval window to the user.
+  Returns the current connection status.
   ```jsx
   input: {};
   output: {
