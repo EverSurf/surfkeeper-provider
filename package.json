@@ -1,6 +1,6 @@
 {
   "name": "@eversurf/surfkeeper-provider",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Provider interface for Surf Keeper extension of the Everscale blockchain",
   "repository": {
     "type": "git",
