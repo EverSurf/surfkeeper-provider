@@ -18,8 +18,6 @@ export * from './models';
  * @remarks Provider
  */
 export interface Provider {
-  readonly isSurf: boolean;
-
   checkConnection(): Promise<ConnectResponse | void>;
   connect(): Promise<ConnectResponse | void>;
   disconnect(): Promise<ConnectResponse | void>;
@@ -99,7 +97,7 @@ export async function hasSurfKeeperProvider(): Promise<boolean> {
   }
 
   await isPageLoaded;
-  return Boolean(window.surfkeeper) && window.surfkeeper!.isSurf;
+  return Boolean(window.surfkeeper);
 }
 
 /**
