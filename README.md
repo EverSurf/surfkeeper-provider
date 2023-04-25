@@ -14,7 +14,7 @@
 ### How to install
 
 ```shell
-npm install --save surf-keeper-provider
+yarn add @eversurf/surfkeeper-provider
 ```
 
 ### Methods
