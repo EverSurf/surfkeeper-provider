@@ -10,7 +10,13 @@ import {
   RawProviderSubscriptionResponse,
   ProviderSubscriptionRequestParams,
 } from './api';
-import { ConnectResponse, SubscriptionResponse, SubscriptionParams, SubscriptionType } from './models';
+import {
+  ConnectResponse,
+  SubscriptionResponse,
+  SubscriptionParams,
+  SubscriptionType,
+  DisconnectResponse,
+} from './models';
 export * from './api';
 export * from './models';
 
@@ -18,9 +24,9 @@ export * from './models';
  * @remarks Provider
  */
 export interface Provider {
-  checkConnection(): Promise<ConnectResponse | void>;
-  connect(): Promise<ConnectResponse | void>;
-  disconnect(): Promise<ConnectResponse | void>;
+  checkConnection(): Promise<ConnectResponse>;
+  connect(): Promise<ConnectResponse>;
+  disconnect(): Promise<DisconnectResponse>;
   subscribe<T extends SubscriptionType>(params: SubscriptionParams<T>): SubscriptionResponse;
   request<T extends ApiMethod>(params: RawProviderRequest<T>): Promise<RawProviderApiResponse<T>>;
 }
@@ -74,7 +80,7 @@ const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'u
 const getProvider = (): Provider | undefined => (isBrowser ? window.surfkeeper : undefined);
 
 let isPageLoaded: Promise<void>;
-if (document.readyState === 'complete' || !isBrowser) {
+if (!isBrowser || window.document.readyState === 'complete') {
   isPageLoaded = Promise.resolve();
 } else {
   isPageLoaded = new Promise<void>(resolve => {
@@ -257,7 +263,7 @@ export class ProviderRpcClient {
   /**
    * Connect extension
    */
-  public async connect(): Promise<ConnectResponse | void> {
+  public async connect(): Promise<ConnectResponse> {
     await this.ensureInitialized();
     return await this._provider!.connect();
   }
@@ -265,7 +271,7 @@ export class ProviderRpcClient {
   /**
    * Get connection status
    */
-  public async connectStatus(): Promise<ConnectResponse | void> {
+  public async connectStatus(): Promise<ConnectResponse> {
     await this.ensureInitialized();
     return await this._provider!.checkConnection();
   }
@@ -273,9 +279,9 @@ export class ProviderRpcClient {
   /**
    * Disconnect
    */
-  public async disconnect(): Promise<ConnectResponse | void> {
+  public async disconnect(): Promise<DisconnectResponse> {
     await this.ensureInitialized();
-    await this._provider!.disconnect();
+    return await this._provider!.disconnect();
   }
 
   /**
