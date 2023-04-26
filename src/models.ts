@@ -6,6 +6,10 @@ export type Address = string;
 
 export type EverscaleNetNameKey = 'mainnet' | 'devnet';
 
+export interface DisconnectResponse {
+  isConnected: false;
+}
+
 export interface ConnectResponse {
   isConnected: boolean;
   address?: Address;
