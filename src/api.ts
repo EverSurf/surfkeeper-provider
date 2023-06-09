@@ -1,22 +1,38 @@
-import { Abi, Address, EverscaleNetNameKey, SubscriptionResponse, SubscriptionType } from './models';
+import { SubscriptionType } from './constants';
+import type {
+  Abi,
+  Address,
+  EverscaleNetNameKey,
+  FunctionHeader,
+  SendResult,
+  SubscriptionDisposer,
+  SubscriptionParams,
+  SubscriptionResponse,
+} from './types';
+
+/**
+ * @remarks Subscription Api
+ */
+export type SubscriptionListener<R> = (value: R | undefined, error?: Error) => void | Promise<void>;
 
 /**
  * @remarks Subscription
  */
-export declare type SubscriptionApi<T extends SubscriptionType, Addr = Address> = {
+export declare type SubscriptionApi<
+  T extends SubscriptionType,
+  P extends SubscriptionParams<T>,
+  R extends SubscriptionResponse<T>,
+> = {
   /**
-   * Signs arbitrary data.
+   * Subscribes on data updates.
+   * Returns updated data in listener callback.
    */
   subscribe: {
     input: {
-      /**
-       * Base64 encoded arbitrary bytes
-       */
-      type: SubscriptionType;
-      listener: SubscriptionListener<T>;
-      address: Addr;
-    };
-    output: SubscriptionResponse;
+      type: T;
+      listener: SubscriptionListener<R>;
+    } & P;
+    output: SubscriptionDisposer;
   };
 };
 
@@ -30,15 +46,21 @@ export declare type ProviderApi<Addr = Address> = {
   signData: {
     input: {
       /**
-       * Base64 encoded arbitrary bytes
+       * Unsigned user data.
+       * Must be encoded with base64.
        */
       data: string;
     };
     output: {
       /**
-       * Base64 encoded signature bytes (data is guaranteed to be 64 bytes long)
+       * Data signature.
+       * Encoded with hex.
        */
       signature: string;
+      /**
+       * String with error details
+       */
+      error?: string;
     };
   };
   /**
@@ -48,47 +70,55 @@ export declare type ProviderApi<Addr = Address> = {
   sendMessage: {
     input: {
       /**
-       * Contract abi
+       * Contract abi.
        */
       abi: Abi;
       /**
-       * Name of action to be performed by message send
+       * Name of action to be performed by message send.
        */
       action?: string;
       /**
-       * Message destination address
+       * Message destination address.
        */
       address: Addr;
       /**
-       * Amount of nano EVER to send
+       * Amount of nano EVER to send.
        */
       amount: string;
       /**
-       * Whether to bounce message back on error
+       * Whether to bounce message back on error.
        */
       bounce: boolean;
 
       callSet: {
         /**
-         * Name of contract function to be sent to the contract
+         * Name of contract function to be sent to the contract.
          */
         functionName: string;
         /**
-         * Name of contract function to be sent to the contract
+         * Name of contract function to be sent to the contract.
          */
         input: Record<string, any>;
         /**
-         * Options header for function
+         * Options header for function.
          */
-        // header?: FunctionHeader;
-        header?: any;
+        header?: FunctionHeader;
       };
       /**
        * Name of network to send message in
        */
       net: EverscaleNetNameKey;
     };
-    output: {};
+    output: {
+      /**
+       * Result of message or transaction send
+       */
+      result?: SendResult;
+      /**
+       * String with error details
+       */
+      error?: string;
+    };
   };
   /**
    * Sends transaction with provided params.
@@ -116,7 +146,16 @@ export declare type ProviderApi<Addr = Address> = {
        */
       to: Addr;
     };
-    output: {};
+    output: {
+      /**
+       * Result of message or transaction send
+       */
+      result?: SendResult;
+      /**
+       * String with error details
+       */
+      error?: string;
+    };
   };
 };
 
@@ -165,11 +204,6 @@ export interface RawProviderRequest<T extends ApiMethod> {
  * @remarks Subscription Api
  */
 export type SubscriptionMethod = keyof SubscriptionApi<SubscriptionType>;
-
-/**
- * @remarks Subscription Api
- */
-export type SubscriptionListener<T extends SubscriptionType> = (args: SubscriptionListenerParams<T>) => void;
 
 /**
  * @remarks Subscription Api
