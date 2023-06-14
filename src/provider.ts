@@ -7,7 +7,7 @@ import {
     RawProviderSubscriptionRequestParams,
 } from './api';
 
-import { SubscriptionType } from './constants';
+import { RequestMethod, SubscriptionType } from './constants';
 
 import type {
     ConnectResponse,
@@ -16,6 +16,7 @@ import type {
     ProviderProperties,
     RawProviderApiMethods,
     RawProviderSubscriptionMethods,
+    RequestParams,
     SubscriptionDisposer,
 } from './types';
 
@@ -81,8 +82,10 @@ export class ProviderRpcClient {
                 <M extends ApiMethod>(_object: RawProviderApiMethods, method: M) =>
                 (params: RawProviderApiRequestParams<M>) => {
                     if (this._provider != null) {
-                        // @ts-ignore
-                        return this._provider.request({ method, params });
+                        return this._provider.request({ method, params } as {
+                            method: RequestMethod;
+                            params: RequestParams<RequestMethod>;
+                        });
                     } else {
                         throw new ProviderNotInitializedException();
                     }
@@ -95,7 +98,6 @@ export class ProviderRpcClient {
                 <T extends SubscriptionType>(_object: RawProviderSubscriptionMethods) =>
                 (params: RawProviderSubscriptionRequestParams<T>) => {
                     if (this._provider != null) {
-                        // @ts-ignore
                         return this._provider.subscribe(params);
                     } else {
                         throw new ProviderNotInitializedException();
@@ -257,7 +259,6 @@ export class ProviderRpcClient {
      * Subscribes on the event and listens to the updates.
      */
     public subscribe<T extends SubscriptionType>(args: ProviderSubscriptionRequestParams<T>): SubscriptionDisposer {
-        // @ts-ignore
-        return this._subscribe.subscribe(args);
+        return this._subscribe.subscribe(args as unknown as RawProviderSubscriptionRequestParams<SubscriptionType>);
     }
 }
