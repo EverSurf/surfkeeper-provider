@@ -17,7 +17,7 @@ import type { RequestMethod, SubscriptionType } from './constants';
 export type CheckConnectionParams = Record<string, never>;
 
 export type ConnectParams = {
-    icon?: string;
+    //
 };
 
 export type ConnectResponse = {
@@ -137,7 +137,7 @@ type FunctionHeader = {
      * Public key is used by the contract to check the signature.
      *
      * @remarks
-     * Encoded in `hex`. If not specified, method fails with exception (if ABI includes `pubkey` header)..
+     * Encoded in `hex`. If not specified, method fails with exception (if ABI includes `pubkey` header).
      */
     pubkey?: string;
 };
@@ -148,7 +148,7 @@ type CallSet = {
      */
     functionName: string;
     /**
-     * Name of contract function to be sent to the contract.
+     * Input for the contract function.
      */
     input: Record<string, any>;
     /**
@@ -192,23 +192,23 @@ export type SendMessageParams = {
 
 export type SendTransactionParams = {
     /**
-     * Amount of nano EVER to send
+     * Amount of nano EVER to send.
      */
     amount: string;
     /**
-     * Whether to bounce message back on error
+     * Whether to bounce message back on error.
      */
     bounce: boolean;
     /**
-     * Comment for the transaction to send it in payload
+     * Comment for the transaction to send it in payload.
      */
     comment: string;
     /**
-     * Name of network to send message in
+     * Name of network to send message in.
      */
     net: ClientNetName;
     /**
-     * Address to send transaction to
+     * Address to send transaction to.
      */
     to: string;
 };
@@ -245,11 +245,11 @@ type SendResult = {
 
 export type SendResponse = {
     /**
-     * Result of message or transaction send
+     * Result of message or transaction send.
      */
     result?: SendResult;
     /**
-     * String with error details
+     * String with error details.
      */
     error?: string;
 };
@@ -271,7 +271,7 @@ export interface SignDataResponse {
      */
     signature?: string;
     /**
-     * String with error details
+     * String with error details.
      */
     error?: string;
 }
