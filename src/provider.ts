@@ -260,19 +260,7 @@ export class ProviderRpcClient {
         args: ProviderApiRequestParams<'sendMessage'>,
     ): Promise<ProviderApiResponse<'sendMessage'>> {
         await this.ensureInitialized();
-        return this._api.sendMessage({
-            abi: args.abi,
-            action: args.action,
-            address: args.address,
-            amount: args.amount,
-            bounce: args.bounce,
-            callSet: {
-                functionName: args.callSet.functionName,
-                input: args.callSet.input,
-                header: args.callSet.header,
-            },
-            net: args.net,
-        });
+        return this._api.sendMessage(args);
     }
 
     /**
@@ -283,13 +271,7 @@ export class ProviderRpcClient {
         args: ProviderApiRequestParams<'sendTransaction'>,
     ): Promise<ProviderApiResponse<'sendTransaction'>> {
         await this.ensureInitialized();
-        return this._api.sendTransaction({
-            amount: args.amount,
-            bounce: args.bounce,
-            comment: args.comment,
-            net: args.net,
-            to: args.to,
-        });
+        return this._api.sendTransaction(args);
     }
 
     /**
