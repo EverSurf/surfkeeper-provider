@@ -2,8 +2,6 @@ export enum RequestMethod {
     CheckConnection = 'checkConnection',
     Connect = 'connect',
     Disconnect = 'disconnect',
-    UnsubscribeFromBalance = 'unsubscribeFromBalance',
-    UnsubscribeFromIsConnected = 'unsubscribeFromIsConnected',
     SendMessage = 'sendMessage',
     SendTransaction = 'sendTransaction',
     SignData = 'signData',

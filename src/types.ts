@@ -4,10 +4,7 @@ import {
     RawProviderApiResponse,
     RawProviderSubscriptionRequestParams,
     RawProviderSubscriptionResponse,
-    RawProviderUnsubscriptionRequestParams,
     SubscriptionMethod,
-    UnsubscriptionMethod,
-    RawProviderUnsubscriptionResponse,
 } from './api';
 
 import type { RequestMethod, SubscriptionType } from './constants';
@@ -42,17 +39,6 @@ export type BalanceSubscriptionParams = {
 
 export type BalanceSubscriptionResponse = string;
 
-// Balance unsubscription
-
-export type BalanceUnsubscriptionParams = {
-    address: string;
-};
-
-export type BalanceUnsubscriptionResponse = {
-    isUnsubscribed: false;
-    error: Error | undefined;
-};
-
 // Connected subscription
 
 export type ConnectedSubscriptionParams = {
@@ -60,17 +46,6 @@ export type ConnectedSubscriptionParams = {
 };
 
 export type ConnectedSubscriptionResponse = boolean;
-
-// Connected unsubscription
-
-export type ConnectedUnsubscriptionParams = {
-    //
-};
-
-export type ConnectedUnsubscriptionResponse = {
-    isUnsubscribed: false;
-    error: Error | undefined;
-};
 
 // Subscription
 
@@ -100,24 +75,6 @@ export type Subscribe<
 export type SubscriptionDisposer = {
     remove: () => void;
 };
-
-// Unsubscription
-
-export type UnsubscriptionParams<T extends SubscriptionType> = T extends SubscriptionType.Balance
-    ? BalanceUnsubscriptionParams
-    : T extends SubscriptionType.IsConnected
-    ? ConnectedUnsubscriptionParams
-    : never;
-
-export type UnsubscriptionResponse<T extends SubscriptionType> = T extends SubscriptionType.Balance
-    ? BalanceUnsubscriptionResponse
-    : T extends SubscriptionType.IsConnected
-    ? ConnectedUnsubscriptionResponse
-    : never;
-
-export type Unsubscribe<T extends SubscriptionType, P extends UnsubscriptionParams<T>> = {
-    type: T;
-} & P;
 
 // Send message or transaction
 
@@ -290,10 +247,6 @@ export type RequestParams<M extends RequestMethod> = M extends RequestMethod.Con
     ? SendTransactionParams
     : M extends RequestMethod.SignData
     ? SignDataParams
-    : M extends RequestMethod.UnsubscribeFromBalance
-    ? BalanceUnsubscriptionParams
-    : M extends RequestMethod.UnsubscribeFromIsConnected
-    ? ConnectedUnsubscriptionParams
     : never;
 
 export type RequestResponse<M extends RequestMethod> = M extends RequestMethod.Connect
@@ -308,10 +261,6 @@ export type RequestResponse<M extends RequestMethod> = M extends RequestMethod.C
     ? SendResponse
     : M extends RequestMethod.SignData
     ? SignDataResponse
-    : M extends RequestMethod.UnsubscribeFromBalance
-    ? BalanceUnsubscriptionResponse
-    : M extends RequestMethod.UnsubscribeFromIsConnected
-    ? ConnectedUnsubscriptionResponse
     : never;
 
 export type Request<M extends RequestMethod, P extends RequestParams<M>> = {
@@ -329,10 +278,6 @@ export interface Provider {
     subscribe<T extends SubscriptionType, P extends SubscriptionParams<T>, R extends SubscriptionResponse<T>>(
         params: Subscribe<T, P, R>,
     ): SubscriptionDisposer;
-
-    unsubscribe<T extends SubscriptionType, P extends UnsubscriptionParams<T>, R extends UnsubscriptionResponse<T>>(
-        params: Unsubscribe<T, P>,
-    ): Promise<R>;
 
     request<M extends RequestMethod, P extends RequestParams<M>, R extends RequestResponse<M>>(
         params: Request<M, P>,
@@ -352,16 +297,12 @@ export declare type ProviderProperties = {
     fallback?: () => Promise<Provider>;
 };
 
-export type RawRpcMethod<M extends ApiMethod | SubscriptionMethod | UnsubscriptionMethod> = M extends ApiMethod
+export type RawRpcMethod<M extends ApiMethod | SubscriptionMethod> = M extends ApiMethod
     ? (args: RawProviderApiRequestParams<M>) => Promise<RawProviderApiResponse<M>>
     : M extends SubscriptionMethod
     ? (
           args: RawProviderSubscriptionRequestParams<SubscriptionType>,
       ) => RawProviderSubscriptionResponse<SubscriptionType>
-    : M extends UnsubscriptionMethod
-    ? (
-          args: RawProviderUnsubscriptionRequestParams<SubscriptionType>,
-      ) => RawProviderUnsubscriptionResponse<SubscriptionType>
     : never;
 
 export type RawProviderApiMethods = {
@@ -370,10 +311,6 @@ export type RawProviderApiMethods = {
 
 export type RawProviderSubscriptionMethods = {
     [M in SubscriptionMethod]: RawRpcMethod<M>;
-};
-
-export type RawProviderUnsubscriptionMethods = {
-    [M in UnsubscriptionMethod]: RawRpcMethod<M>;
 };
 
 declare global {

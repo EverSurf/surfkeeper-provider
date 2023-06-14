@@ -3,11 +3,8 @@ import {
     ProviderApiRequestParams,
     ProviderApiResponse,
     ProviderSubscriptionRequestParams,
-    ProviderUnsubscriptionRequestParams,
-    ProviderUnsubscriptionResponse,
     RawProviderApiRequestParams,
     RawProviderSubscriptionRequestParams,
-    RawProviderUnsubscriptionRequestParams,
 } from './api';
 
 import { SubscriptionType } from './constants';
@@ -19,7 +16,6 @@ import type {
     ProviderProperties,
     RawProviderApiMethods,
     RawProviderSubscriptionMethods,
-    RawProviderUnsubscriptionMethods,
     SubscriptionDisposer,
 } from './types';
 
@@ -72,8 +68,6 @@ export class ProviderRpcClient {
 
     private readonly _subscribe: RawProviderSubscriptionMethods;
 
-    private readonly _unsubscribe: RawProviderUnsubscriptionMethods;
-
     private readonly _initializationPromise: Promise<void>;
 
     private _provider?: Provider;
@@ -108,21 +102,6 @@ export class ProviderRpcClient {
                     }
                 },
         });
-
-        this._unsubscribe = new Proxy<RawProviderUnsubscriptionMethods>(
-            {} as unknown as RawProviderUnsubscriptionMethods,
-            {
-                get:
-                    <T extends SubscriptionType>(_object: RawProviderUnsubscriptionMethods) =>
-                    (params: RawProviderUnsubscriptionRequestParams<T>) => {
-                        if (this._provider != null) {
-                            return this._provider.unsubscribe(params);
-                        } else {
-                            throw new ProviderNotInitializedException();
-                        }
-                    },
-            },
-        );
 
         if (properties.forceUseFallback === true) {
             this._initializationPromise =
@@ -280,15 +259,5 @@ export class ProviderRpcClient {
     public subscribe<T extends SubscriptionType>(args: ProviderSubscriptionRequestParams<T>): SubscriptionDisposer {
         // @ts-ignore
         return this._subscribe.subscribe(args);
-    }
-
-    /**
-     * Unsubscribes from the event listening.
-     */
-    public unsubscribe<T extends SubscriptionType>(
-        args: ProviderUnsubscriptionRequestParams<T>,
-    ): Promise<ProviderUnsubscriptionResponse<T>> {
-        // @ts-ignore
-        return this._unsubscribe.unsubscribe(args);
     }
 }

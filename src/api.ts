@@ -5,8 +5,6 @@ import type {
     SubscriptionParams,
     SubscriptionResponse,
     SubscriptionListener,
-    UnsubscriptionParams,
-    UnsubscriptionResponse,
     SendMessageParams,
     SendTransactionParams,
     SendResponse,
@@ -129,55 +127,3 @@ export type ProviderSubscriptionResponse<T extends SubscriptionType> = Subscript
  * @remarks Subscription Api
  */
 export type RawProviderSubscriptionResponse<T extends SubscriptionType> = ProviderSubscriptionResponse<T>;
-
-// Unsubscription Api
-
-/**
- * @remarks Unsubscription Api
- */
-export declare type UnsubscriptionApi<T extends SubscriptionType> = {
-    /**
-     * Unsubscribes from corresponding subscription listener data updates.
-     */
-    unsubscribe: {
-        input: {
-            type: T;
-        } & UnsubscriptionParams<T>;
-        output: UnsubscriptionResponse<T>;
-    };
-};
-
-/**
- * @remarks Unsubscription Api
- */
-export type UnsubscriptionMethod = keyof UnsubscriptionApi<SubscriptionType>;
-
-/**
- * @remarks Unsubscription Api
- */
-export type ProviderUnsubscriptionRequestParams<T extends SubscriptionType> =
-    UnsubscriptionApi<T>[UnsubscriptionMethod] extends {
-        input: infer I;
-    }
-        ? I
-        : undefined;
-
-/**
- * @remarks Unsubscription Api
- */
-export type RawProviderUnsubscriptionRequestParams<T extends SubscriptionType> = ProviderUnsubscriptionRequestParams<T>;
-
-/**
- * @remarks Unsubscription Api
- */
-export type ProviderUnsubscriptionResponse<T extends SubscriptionType> =
-    UnsubscriptionApi<T>[UnsubscriptionMethod] extends {
-        output: infer O;
-    }
-        ? O
-        : undefined;
-
-/**
- * @remarks Unsubscription Api
- */
-export type RawProviderUnsubscriptionResponse<T extends SubscriptionType> = ProviderUnsubscriptionResponse<T>;
