@@ -112,6 +112,7 @@ yarn add @eversurf/surfkeeper-provider
     ```
 -   **sendTransaction**
     Sends transaction with provided params.
+    Shows an approval window to the user.
     ```jsx
     input: {
         amount: string; // Amount of nano tokens to send.
@@ -145,6 +146,7 @@ yarn add @eversurf/surfkeeper-provider
     ```
 -   **signData**
     Signs arbitrary data.
+    Shows an approval window to the user.
     ```jsx
     input: {
         data: string; // Unsigned user data; must be encoded with base64.
