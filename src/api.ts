@@ -1,123 +1,45 @@
-import { Abi, Address, EverscaleNetNameKey, SubscriptionResponse, SubscriptionType } from './models';
+import { SubscriptionType } from './constants';
+
+import type {
+    SubscriptionDisposer,
+    SubscriptionParams,
+    SubscriptionResponse,
+    SubscriptionListener,
+    SendMessageParams,
+    SendTransactionParams,
+    SendResponse,
+    SignDataParams,
+    SignDataResponse,
+} from './types';
+
+// Provider Api
 
 /**
- * @remarks Subscription
+ * @remarks Provider Api
  */
-export declare type SubscriptionApi<T extends SubscriptionType, Addr = Address> = {
-  /**
-   * Signs arbitrary data.
-   */
-  subscribe: {
-    input: {
-      /**
-       * Base64 encoded arbitrary bytes
-       */
-      type: SubscriptionType;
-      listener: SubscriptionListener<T>;
-      address: Addr;
+export declare type ProviderApi = {
+    /**
+     * Signs arbitrary data.
+     */
+    signData: {
+        input: SignDataParams;
+        output: SignDataResponse;
     };
-    output: SubscriptionResponse;
-  };
-};
-
-/**
- * @remarks Provider
- */
-export declare type ProviderApi<Addr = Address> = {
-  /**
-   * Signs arbitrary data.
-   */
-  signData: {
-    input: {
-      /**
-       * Base64 encoded arbitrary bytes
-       */
-      data: string;
+    /**
+     * Sends an internal message from the user account.
+     * Shows an approval window to the user.
+     */
+    sendMessage: {
+        input: SendMessageParams;
+        output: SendResponse;
     };
-    output: {
-      /**
-       * Base64 encoded signature bytes (data is guaranteed to be 64 bytes long)
-       */
-      signature: string;
+    /**
+     * Sends transaction with provided params.
+     */
+    sendTransaction: {
+        input: SendTransactionParams;
+        output: SendResponse;
     };
-  };
-  /**
-   * Sends an internal message from the user account.
-   * Shows an approval window to the user.
-   */
-  sendMessage: {
-    input: {
-      /**
-       * Contract abi
-       */
-      abi: Abi;
-      /**
-       * Name of action to be performed by message send
-       */
-      action?: string;
-      /**
-       * Message destination address
-       */
-      address: Addr;
-      /**
-       * Amount of nano EVER to send
-       */
-      amount: string;
-      /**
-       * Whether to bounce message back on error
-       */
-      bounce: boolean;
-
-      callSet: {
-        /**
-         * Name of contract function to be sent to the contract
-         */
-        functionName: string;
-        /**
-         * Name of contract function to be sent to the contract
-         */
-        input: Record<string, any>;
-        /**
-         * Options header for function
-         */
-        // header?: FunctionHeader;
-        header?: any;
-      };
-      /**
-       * Name of network to send message in
-       */
-      net: EverscaleNetNameKey;
-    };
-    output: {};
-  };
-  /**
-   * Sends transaction with provided params.
-   */
-  sendTransaction: {
-    input: {
-      /**
-       * Amount of nano EVER to send
-       */
-      amount: string;
-      /**
-       * Whether to bounce message back on error
-       */
-      bounce: boolean;
-      /**
-       * Comment for the transaction to send it in payload
-       */
-      comment: string;
-      /**
-       * Name of network to send message in
-       */
-      net: EverscaleNetNameKey;
-      /**
-       * Address to send transaction to
-       */
-      to: Addr;
-    };
-    output: {};
-  };
 };
 
 /**
@@ -128,38 +50,49 @@ export type ApiMethod = keyof ProviderApi;
 /**
  * @remarks Provider Api
  */
-export type ProviderApiRequestParams<T extends ApiMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
-  input: infer I;
+export type ProviderApiRequestParams<T extends ApiMethod> = ProviderApi[T] extends {
+    input: infer I;
 }
-  ? I
-  : undefined;
+    ? I
+    : undefined;
 
 /**
  * @remarks Provider Api
  */
-export type RawProviderApiRequestParams<T extends ApiMethod> = ProviderApiRequestParams<T, string>;
+export type RawProviderApiRequestParams<T extends ApiMethod> = ProviderApiRequestParams<T>;
 
 /**
  * @remarks Provider Api
  */
-export type ProviderApiResponse<T extends ApiMethod, Addr = Address> = ProviderApi<Addr>[T] extends {
-  output: infer O;
+export type ProviderApiResponse<T extends ApiMethod> = ProviderApi[T] extends {
+    output: infer O;
 }
-  ? O
-  : undefined;
+    ? O
+    : undefined;
 
 /**
  * @remarks Provider Api
  */
-export type RawProviderApiResponse<T extends ApiMethod> = ProviderApiResponse<T, string>;
+export type RawProviderApiResponse<T extends ApiMethod> = ProviderApiResponse<T>;
+
+// Subscription Api
 
 /**
- * @remarks Provider Api
+ * @remarks Subscription Api
  */
-export interface RawProviderRequest<T extends ApiMethod> {
-  method: T;
-  params: RawProviderApiRequestParams<T>;
-}
+export declare type SubscriptionApi<T extends SubscriptionType> = {
+    /**
+     * Subscribes on data updates.
+     * Returns updated data in listener callback.
+     */
+    subscribe: {
+        input: {
+            type: T;
+            listener: SubscriptionListener<SubscriptionResponse<T>>;
+        } & SubscriptionParams<T>;
+        output: SubscriptionDisposer;
+    };
+};
 
 /**
  * @remarks Subscription Api
@@ -169,46 +102,28 @@ export type SubscriptionMethod = keyof SubscriptionApi<SubscriptionType>;
 /**
  * @remarks Subscription Api
  */
-export type SubscriptionListener<T extends SubscriptionType> = (args: SubscriptionListenerParams<T>) => void;
+export type ProviderSubscriptionRequestParams<T extends SubscriptionType> =
+    SubscriptionApi<T>[SubscriptionMethod] extends {
+        input: infer I;
+    }
+        ? I
+        : undefined;
 
 /**
  * @remarks Subscription Api
  */
-export type SubscriptionListenerParams<T extends SubscriptionType> = T extends infer R ? R : never;
+export type RawProviderSubscriptionRequestParams<T extends SubscriptionType> = ProviderSubscriptionRequestParams<T>;
 
 /**
- * @remarks Provider Api
+ * @remarks Subscription Api
  */
-export type ProviderSubscriptionRequestParams<T extends SubscriptionType, Addr = Address> = SubscriptionApi<
-  T,
-  Addr
->[SubscriptionMethod] extends {
-  input: infer I;
+export type ProviderSubscriptionResponse<T extends SubscriptionType> = SubscriptionApi<T>[SubscriptionMethod] extends {
+    output: infer O;
 }
-  ? I
-  : undefined;
+    ? O
+    : undefined;
 
 /**
- * @remarks Provider Api
+ * @remarks Subscription Api
  */
-export type RawProviderSubscriptionRequestParams<T extends SubscriptionType> = ProviderSubscriptionRequestParams<
-  T,
-  string
->;
-
-/**
- * @remarks Provider Api
- */
-export type ProviderSubscriptionResponse<T extends SubscriptionType, Addr = Address> = SubscriptionApi<
-  T,
-  Addr
->[SubscriptionMethod] extends {
-  output: infer O;
-}
-  ? O
-  : undefined;
-
-/**
- * @remarks Provider Api
- */
-export type RawProviderSubscriptionResponse<T extends SubscriptionType> = ProviderSubscriptionResponse<T, string>;
+export type RawProviderSubscriptionResponse<T extends SubscriptionType> = ProviderSubscriptionResponse<T>;
