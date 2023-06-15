@@ -77,7 +77,7 @@ export class ProviderRpcClient {
         this._properties = properties;
 
         // Wrap provider requests
-        this._api = new Proxy<RawProviderApiMethods>({} as unknown as RawProviderApiMethods, {
+        this._api = new Proxy<RawProviderApiMethods>({} as RawProviderApiMethods, {
             get:
                 <M extends ApiMethod>(_object: RawProviderApiMethods, method: M) =>
                 (params: RawProviderApiRequestParams<M>) => {
@@ -93,7 +93,7 @@ export class ProviderRpcClient {
         });
 
         // Wrap provider subscriptions
-        this._subscribe = new Proxy<RawProviderSubscriptionMethods>({} as unknown as RawProviderSubscriptionMethods, {
+        this._subscribe = new Proxy<RawProviderSubscriptionMethods>({} as RawProviderSubscriptionMethods, {
             get:
                 <T extends SubscriptionType>(_object: RawProviderSubscriptionMethods) =>
                 (params: RawProviderSubscriptionRequestParams<T>) => {
@@ -258,7 +258,7 @@ export class ProviderRpcClient {
     /**
      * Subscribes on the event and listens to the updates.
      */
-    public subscribe<T extends SubscriptionType>(args: ProviderSubscriptionRequestParams<T>): SubscriptionDisposer {
-        return this._subscribe.subscribe(args as unknown as RawProviderSubscriptionRequestParams<SubscriptionType>);
+    public subscribe(args: ProviderSubscriptionRequestParams<SubscriptionType>): SubscriptionDisposer {
+        return this._subscribe.subscribe(args);
     }
 }
