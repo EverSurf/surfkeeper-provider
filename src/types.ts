@@ -1,5 +1,6 @@
 import {
     ApiMethod,
+    ProviderNetwork,
     RawProviderApiRequestParams,
     RawProviderApiResponse,
     RawProviderSubscriptionRequestParams,
@@ -114,8 +115,6 @@ type CallSet = {
     header?: FunctionHeader;
 };
 
-export type ClientNetName = string;
-
 export type SendMessageParams = {
     /**
      * Contract abi.
@@ -141,10 +140,6 @@ export type SendMessageParams = {
      * Set of params for function call.
      */
     callSet: CallSet;
-    /**
-     * Name of network to send message in.
-     */
-    net: ClientNetName;
 };
 
 export type SendTransactionParams = {
@@ -160,10 +155,6 @@ export type SendTransactionParams = {
      * Comment for the transaction to send it in payload.
      */
     comment: string;
-    /**
-     * Name of network to send message in.
-     */
-    net: ClientNetName;
     /**
      * Address to send transaction to.
      */
@@ -268,7 +259,7 @@ export type Request<M extends RequestMethod, P extends RequestParams<M>> = {
     params?: P;
 };
 
-export interface Provider {
+export interface SurfKeeperInterface {
     checkConnection(): Promise<ConnectResponse>;
 
     connect(): Promise<ConnectResponse>;
@@ -294,8 +285,10 @@ export declare type ProviderProperties = {
      * Provider factory which will be called if injected provider was not found.
      * Can be used for initialization of the standalone Everscale client
      */
-    fallback?: () => Promise<Provider>;
+    fallback?: () => Promise<SurfKeeperProvider>;
 };
+
+export type RawRpcNetwork<N extends ProviderNetwork> = N extends ProviderNetwork ? RawProviderApiMethods : never;
 
 export type RawRpcMethod<M extends ApiMethod | SubscriptionMethod> = M extends ApiMethod
     ? (args: RawProviderApiRequestParams<M>) => Promise<RawProviderApiResponse<M>>
@@ -305,6 +298,10 @@ export type RawRpcMethod<M extends ApiMethod | SubscriptionMethod> = M extends A
       ) => RawProviderSubscriptionResponse<SubscriptionType>
     : never;
 
+export type RawProviderApiNetworks = {
+    [N in ProviderNetwork]: RawRpcNetwork<N>;
+};
+
 export type RawProviderApiMethods = {
     [M in ApiMethod]: RawRpcMethod<M>;
 };
@@ -313,8 +310,18 @@ export type RawProviderSubscriptionMethods = {
     [M in SubscriptionMethod]: RawRpcMethod<M>;
 };
 
+export type SurfKeeperProvider = SurfKeeperInterface & {
+    everscale: SurfKeeperInterface;
+    gosh: SurfKeeperInterface;
+    ton: SurfKeeperInterface;
+    venom: SurfKeeperInterface;
+    // Testing networks
+    dev: SurfKeeperInterface;
+    fld: SurfKeeperInterface;
+};
+
 declare global {
     interface Window {
-        surfkeeper: Provider | undefined;
+        surfkeeper: SurfKeeperProvider | undefined;
     }
 }
