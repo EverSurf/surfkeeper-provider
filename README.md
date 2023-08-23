@@ -78,7 +78,6 @@ yarn add @eversurf/surfkeeper-provider
             input: Record<string, any>; // Input for the contract function.
             header?: FunctionHeader; // Options header for function.
         };
-        net: string; // Name of network to send message in, i.e. 'mainnet' | 'devnet'.
     };
     output: {
         // Result of message send.
@@ -95,7 +94,7 @@ yarn add @eversurf/surfkeeper-provider
     ```
     Example:
     ```jsx
-    const response = await rpc.sendMessage({
+    const response = await rpc.networks.everscale.sendMessage({
         abi: '{"ABI version":2,"version":"2.3","header":["pubkey","time","expire"]...',
         action: 'Create comment',
         address: '0:8959ea111cc0c85d996df0d16e530d584d5366618cfed9ab6a1754828bb78479',
@@ -107,7 +106,6 @@ yarn add @eversurf/surfkeeper-provider
                 comment: 'Test comment',
             },
         },
-        net: 'mainnet',
     });
     ```
 -   **sendTransaction**
@@ -118,7 +116,6 @@ yarn add @eversurf/surfkeeper-provider
         amount: string; // Amount of nano tokens to send.
         bounce: boolean; // Whether to bounce message back on error.
         comment: string; // Comment for the transaction to send it in payload.
-        net: string; // Name of network to send transaction in, i.e. 'mainnet' | 'devnet'.
         to: string; // Address to send transaction to.
     }
     output: {
@@ -136,11 +133,10 @@ yarn add @eversurf/surfkeeper-provider
     ```
     Example:
     ```jsx
-    const response = await rpc.sendTransaction({
+    const response = await rpc.networks.everscale.sendTransaction({
         amount: '10000000000', // in nano-tokens, i.e. 10 tokens
         bounce: true,
         comment: 'check it out!',
-        net: 'devnet',
         to: '0:b76b532fbe72307bff243b401d6792d5d01332ea294a0310c0ffdf874026f2b9',
     });
     ```
@@ -158,7 +154,7 @@ yarn add @eversurf/surfkeeper-provider
     ```
     Example:
     ```jsx
-    const response = await rpc.signData({
+    const response = await rpc.networks.everscale.signData({
         data: 'te6ccgEBAQEAKAAASw4E0p6AD5fz9JsGWfbBhP0Bwq9+jk0X3za9rhuI7A1H3DxC0QBw',
     });
     ```
@@ -191,55 +187,57 @@ import { ProviderRpcClient } from '@eversurf/surfkeeper-provider';
 const rpc = new ProviderRpcClient();
 
 async function myApp() {
-  if (!(await rpc.hasProvider())) {
-    throw new Error('Extension is not installed');
-  }
+    if (!(await rpc.hasProvider())) {
+        throw new Error('Extension is not installed');
+    }
 
-  const connectionInfo = await rpc.connect();
-  if (connectionInfo == undefined) {
-    throw new Error('Insufficient permissions');
-  }
+    const connectionInfo = await rpc.connect();
+    if (connectionInfo == undefined) {
+        throw new Error('Insufficient permissions');
+    }
 
-  const selectedAddress = connectionInfo.address;
-  const isConnected = connectionInfo.isConnected;
-  const publicKey = connectionInfo.publicKey;
+    const selectedAddress = connectionInfo.address;
+    const isConnected = connectionInfo.isConnected;
+    const publicKey = connectionInfo.publicKey;
 
-  const sendTransactionResult = await rpc
-    .sendTransaction({
-        amount: '10000000000',
-        bounce: true,
-        comment: 'check it out!',
-        net: 'devnet',
-        to: '0:b76b532fbe72307bff243b401d6792d5d01332ea294a0310c0ffdf874026f2b9'
-    });
-  console.log(sendTransactionResult);
+    const sendTransactionResult = await rpc
+        .networks
+        .everscale
+        .sendTransaction({
+            amount: '10000000000',
+            bounce: true,
+            comment: 'check it out!',
+            to: '0:b76b532fbe72307bff243b401d6792d5d01332ea294a0310c0ffdf874026f2b9'
+        });
+    console.log(sendTransactionResult);
 
-  const sendMessageResult = await rpc
-    .sendMessage({
-        abi,
-        action: 'Create comment',
-        address: '0:8959ea111cc0c85d996df0d16e530d584d5366618cfed9ab6a1754828bb78479',
-        amount: '2000000000', // in nano-tokens, i.e. 2 tokens
-        bounce: true,
-        callSet: {
-            functionName: 'functionName',
-            input: {
-                comment: 'Test comment',
+    const sendMessageResult = await rpc
+        .networks
+        .everscale
+        .sendMessage({
+            abi,
+            action: 'Create comment',
+            address: '0:8959ea111cc0c85d996df0d16e530d584d5366618cfed9ab6a1754828bb78479',
+            amount: '2000000000', // in nano-tokens, i.e. 2 tokens
+            bounce: true,
+            callSet: {
+                functionName: 'functionName',
+                input: {
+                    comment: 'Test comment',
+                },
             },
-        },
-        net: 'mainnet',
-    });
-  console.log(sendMessageResult);
+        });
+    console.log(sendMessageResult);
 }
 
 const abi = {
-  'ABI version': 2,
-  'header': ['time', 'expire'],
-  'functions': [{
-    ...
-  }],
-  'data': [],
-  'events': [],
+    'ABI version': 2,
+    'header': ['time', 'expire'],
+    'functions': [{
+        ...
+    }],
+    'data': [],
+    'events': [],
 } as const; // NOTE: `as const` is very important here
 
 myApp().catch(console.error);

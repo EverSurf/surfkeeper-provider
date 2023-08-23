@@ -12,14 +12,35 @@ import type {
     SignDataResponse,
 } from './types';
 
+// Networks Api
+
+/**
+ * @remarks Networks Api
+ */
+export declare type ProviderApi = {
+    everscale: ProviderMethodsApi;
+    gosh: ProviderMethodsApi;
+    ton: ProviderMethodsApi;
+    venom: ProviderMethodsApi;
+    // Testing networks
+    dev: ProviderMethodsApi;
+    fld: ProviderMethodsApi;
+};
+
+/**
+ * @remarks Networks Api
+ */
+export type ProviderNetwork = keyof ProviderApi;
+
 // Provider Api
 
 /**
  * @remarks Provider Api
  */
-export declare type ProviderApi = {
+export declare type ProviderMethodsApi = {
     /**
-     * Signs arbitrary data.
+     * Signs an arbitrary data.
+     * Shows an approval window to the user.
      */
     signData: {
         input: SignDataParams;
@@ -35,6 +56,7 @@ export declare type ProviderApi = {
     };
     /**
      * Sends transaction with provided params.
+     * Shows an approval window to the user.
      */
     sendTransaction: {
         input: SendTransactionParams;
@@ -45,12 +67,12 @@ export declare type ProviderApi = {
 /**
  * @remarks Provider Api
  */
-export type ApiMethod = keyof ProviderApi;
+export type ApiMethod = keyof ProviderMethodsApi;
 
 /**
  * @remarks Provider Api
  */
-export type ProviderApiRequestParams<T extends ApiMethod> = ProviderApi[T] extends {
+export type ProviderApiRequestParams<T extends ApiMethod> = ProviderMethodsApi[T] extends {
     input: infer I;
 }
     ? I
@@ -64,7 +86,7 @@ export type RawProviderApiRequestParams<T extends ApiMethod> = ProviderApiReques
 /**
  * @remarks Provider Api
  */
-export type ProviderApiResponse<T extends ApiMethod> = ProviderApi[T] extends {
+export type ProviderApiResponse<T extends ApiMethod> = ProviderMethodsApi[T] extends {
     output: infer O;
 }
     ? O
