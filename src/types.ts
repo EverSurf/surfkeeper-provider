@@ -288,8 +288,6 @@ export declare type ProviderProperties = {
     fallback?: () => Promise<SurfKeeperProvider>;
 };
 
-export type RawRpcNetwork<N extends ProviderNetwork> = N extends ProviderNetwork ? RawProviderApiMethods : never;
-
 export type RawRpcMethod<M extends ApiMethod | SubscriptionMethod> = M extends ApiMethod
     ? (args: RawProviderApiRequestParams<M>) => Promise<RawProviderApiResponse<M>>
     : M extends SubscriptionMethod
@@ -297,10 +295,6 @@ export type RawRpcMethod<M extends ApiMethod | SubscriptionMethod> = M extends A
           args: RawProviderSubscriptionRequestParams<SubscriptionType>,
       ) => RawProviderSubscriptionResponse<SubscriptionType>
     : never;
-
-export type RawProviderApiNetworks = {
-    [N in ProviderNetwork]: RawRpcNetwork<N>;
-};
 
 export type RawProviderApiMethods = {
     [M in ApiMethod]: RawRpcMethod<M>;
@@ -311,13 +305,13 @@ export type RawProviderSubscriptionMethods = {
 };
 
 export type SurfKeeperProvider = SurfKeeperInterface & {
-    everscale: SurfKeeperInterface;
-    gosh: SurfKeeperInterface;
-    ton: SurfKeeperInterface;
-    venom: SurfKeeperInterface;
+    [ProviderNetwork.everscale]: SurfKeeperInterface;
+    [ProviderNetwork.gosh]: SurfKeeperInterface;
+    [ProviderNetwork.ton]: SurfKeeperInterface;
+    [ProviderNetwork.venom]: SurfKeeperInterface;
     // Testing networks
-    dev: SurfKeeperInterface;
-    fld: SurfKeeperInterface;
+    [ProviderNetwork.dev]: SurfKeeperInterface;
+    [ProviderNetwork.fld]: SurfKeeperInterface;
 };
 
 declare global {
