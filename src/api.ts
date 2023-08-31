@@ -12,25 +12,20 @@ import type {
     SignDataResponse,
 } from './types';
 
-// Networks Api
+// Networks
 
 /**
- * @remarks Networks Api
+ * @remarks Networks
  */
-export declare type ProviderApi = {
-    everscale: ProviderMethodsApi;
-    gosh: ProviderMethodsApi;
-    ton: ProviderMethodsApi;
-    venom: ProviderMethodsApi;
+export enum ProviderNetwork {
+    everscale = 'everscale',
+    gosh = 'gosh',
+    ton = 'ton',
+    venom = 'venom',
     // Testing networks
-    dev: ProviderMethodsApi;
-    fld: ProviderMethodsApi;
-};
-
-/**
- * @remarks Networks Api
- */
-export type ProviderNetwork = keyof ProviderApi;
+    dev = 'dev',
+    fld = 'fld',
+}
 
 // Provider Api
 

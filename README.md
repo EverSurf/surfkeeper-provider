@@ -94,7 +94,7 @@ yarn add @eversurf/surfkeeper-provider
     ```
     Example:
     ```jsx
-    const response = await rpc.networks.everscale.sendMessage({
+    const response = await rpc.sendMessage({
         abi: '{"ABI version":2,"version":"2.3","header":["pubkey","time","expire"]...',
         action: 'Create comment',
         address: '0:8959ea111cc0c85d996df0d16e530d584d5366618cfed9ab6a1754828bb78479',
@@ -133,7 +133,7 @@ yarn add @eversurf/surfkeeper-provider
     ```
     Example:
     ```jsx
-    const response = await rpc.networks.everscale.sendTransaction({
+    const response = await rpc.sendTransaction({
         amount: '10000000000', // in nano-tokens, i.e. 10 tokens
         bounce: true,
         comment: 'check it out!',
@@ -154,7 +154,7 @@ yarn add @eversurf/surfkeeper-provider
     ```
     Example:
     ```jsx
-    const response = await rpc.networks.everscale.signData({
+    const response = await rpc.signData({
         data: 'te6ccgEBAQEAKAAASw4E0p6AD5fz9JsGWfbBhP0Bwq9+jk0X3za9rhuI7A1H3DxC0QBw',
     });
     ```
@@ -182,9 +182,12 @@ yarn add @eversurf/surfkeeper-provider
 ### Example
 
 ```typescript
-import { ProviderRpcClient } from '@eversurf/surfkeeper-provider';
+import { ProviderNetwork, ProviderRpcClient } from '@eversurf/surfkeeper-provider';
 
-const rpc = new ProviderRpcClient();
+// By default new client will be created for ProviderNetwork.everscale network;
+// to work with other networks pass ProviderNetwork enum value
+// as a first parameter of ProviderRpcClient constructor
+const rpc = new ProviderRpcClient(ProviderNetwork.everscale);
 
 async function myApp() {
     if (!(await rpc.hasProvider())) {
@@ -201,8 +204,6 @@ async function myApp() {
     const publicKey = connectionInfo.publicKey;
 
     const sendTransactionResult = await rpc
-        .networks
-        .everscale
         .sendTransaction({
             amount: '10000000000',
             bounce: true,
@@ -212,8 +213,6 @@ async function myApp() {
     console.log(sendTransactionResult);
 
     const sendMessageResult = await rpc
-        .networks
-        .everscale
         .sendMessage({
             abi,
             action: 'Create comment',

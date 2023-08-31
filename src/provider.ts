@@ -1,5 +1,7 @@
 import {
     ApiMethod,
+    ProviderApiRequestParams,
+    ProviderApiResponse,
     ProviderNetwork,
     ProviderSubscriptionRequestParams,
     RawProviderApiRequestParams,
@@ -11,13 +13,12 @@ import { RequestMethod, SubscriptionType } from './constants';
 import type {
     ConnectResponse,
     DisconnectResponse,
-    SurfKeeperProvider,
     ProviderProperties,
-    RawProviderApiNetworks,
     RawProviderApiMethods,
     RawProviderSubscriptionMethods,
     RequestParams,
     SubscriptionDisposer,
+    SurfKeeperProvider,
 } from './types';
 
 const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
@@ -65,46 +66,43 @@ export class ProviderNotInitializedException extends Error {
 export class ProviderRpcClient {
     private _provider?: SurfKeeperProvider;
 
+    private readonly _network: ProviderNetwork = ProviderNetwork.everscale;
+
     private readonly _properties: ProviderProperties;
+
+    private readonly _api: RawProviderApiMethods;
 
     private readonly _subscribe: RawProviderSubscriptionMethods;
 
     private readonly _initializationPromise: Promise<void>;
 
-    public readonly networks: RawProviderApiNetworks;
-
-    constructor(properties: ProviderProperties = {}) {
+    constructor(network: ProviderNetwork, properties: ProviderProperties = {}) {
+        this._network = network;
         this._properties = properties;
 
         // Wrap provider requests
-        this.networks = ['everscale', 'gosh', 'ton', 'venom', 'dev', 'fld'].reduce(
-            (api, networkKey) => ({
-                ...api,
-                [networkKey as ProviderNetwork]: new Proxy<RawProviderApiMethods>({} as RawProviderApiMethods, {
-                    get:
-                        <M extends ApiMethod>(_object: RawProviderApiMethods, method: M) =>
-                        (params: RawProviderApiRequestParams<M>) => {
-                            if (this._provider != null && this._provider[networkKey as ProviderNetwork]) {
-                                return this._provider[networkKey as ProviderNetwork].request({ method, params } as {
-                                    method: RequestMethod;
-                                    params: RequestParams<RequestMethod>;
-                                });
-                            } else {
-                                throw new ProviderNotInitializedException();
-                            }
-                        },
-                }),
-            }),
-            {},
-        ) as RawProviderApiNetworks;
+        this._api = new Proxy<RawProviderApiMethods>({} as RawProviderApiMethods, {
+            get:
+                <M extends ApiMethod>(_object: RawProviderApiMethods, method: M) =>
+                (params: RawProviderApiRequestParams<M>) => {
+                    if (this._provider != null && this._provider[network] != null) {
+                        return this._provider[network].request({ method, params } as {
+                            method: RequestMethod;
+                            params: RequestParams<RequestMethod>;
+                        });
+                    } else {
+                        throw new ProviderNotInitializedException();
+                    }
+                },
+        });
 
         // Wrap provider subscriptions
         this._subscribe = new Proxy<RawProviderSubscriptionMethods>({} as RawProviderSubscriptionMethods, {
             get:
                 <T extends SubscriptionType>(_object: RawProviderSubscriptionMethods) =>
                 (params: RawProviderSubscriptionRequestParams<T>) => {
-                    if (this._provider != null) {
-                        return this._provider.subscribe(params);
+                    if (this._provider != null && this._provider[network] != null) {
+                        return this._provider[network].subscribe(params);
                     } else {
                         throw new ProviderNotInitializedException();
                     }
@@ -199,13 +197,6 @@ export class ProviderRpcClient {
     }
 
     /**
-     * Raw networks provider api
-     */
-    public get getNetworks(): RawProviderApiNetworks {
-        return this.networks;
-    }
-
-    /**
      * Connect extension.
      * Shows an approval window to the user.
      */
@@ -235,5 +226,36 @@ export class ProviderRpcClient {
      */
     public subscribe(args: ProviderSubscriptionRequestParams<SubscriptionType>): SubscriptionDisposer {
         return this._subscribe.subscribe(args);
+    }
+
+    /**
+     * Signs arbitrary data.
+     * Shows an approval window to the user.
+     */
+    public async signData(args: ProviderApiRequestParams<'signData'>): Promise<ProviderApiResponse<'signData'>> {
+        await this.ensureInitialized();
+        return this._api.signData(args);
+    }
+
+    /**
+     * Sends an internal message from the user account.
+     * Shows an approval window to the user.
+     */
+    public async sendMessage(
+        args: ProviderApiRequestParams<'sendMessage'>,
+    ): Promise<ProviderApiResponse<'sendMessage'>> {
+        await this.ensureInitialized();
+        return this._api.sendMessage(args);
+    }
+
+    /**
+     * Sends transaction with provided params.
+     * Shows an approval window to the user.
+     */
+    public async sendTransaction(
+        args: ProviderApiRequestParams<'sendTransaction'>,
+    ): Promise<ProviderApiResponse<'sendTransaction'>> {
+        await this.ensureInitialized();
+        return this._api.sendTransaction(args);
     }
 }
